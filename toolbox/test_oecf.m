@@ -13,8 +13,10 @@ function test_oecf(in_file, out_file)
         rgbw(i,4) = uint8(rgbw(i,1:3)*[0.2989;0.5870;0.1140]);
     end
     
-    gen_oecf_report(out_file, rgbw);
-    plot_oecf_curv(rgbw);
+    ltable = load('oecf_lum.dat');
+    
+    gen_oecf_report(out_file, rgbw, ltable);
+    %plot_oecf_curv(rgbw, ltable);
     
     disp('Done!');
 end
