@@ -1,9 +1,9 @@
-function gen_mcc_report(file, rgb, srgb, lab, slab)
+function gen_mcc_report(file, rgb, srgb, lab, slab, ref_label)
 
     T1 = [3, 2, 17, 26];
     T2 = [3,30, 7, 54];
     
-    xlswrite(file, {'Ideal' 'Sample' 'Mean-R' 'Mean-G' 'Mean-B' '' 'Ideal-R' 'Ideal-G' 'Ideal-B' '' 'Mean-L*' 'Mean-A*' 'Mean-B*' '' 'Ideal-L*' 'Ideal-A*' 'Ideal-B*'}, getRange(T1(1)-2, T1(2), T1(3), T1(2)));
+    xlswrite(file, {ref_label 'Sample' 'Mean-R' 'Mean-G' 'Mean-B' '' [ref_label,'-R'] [ref_label,'-G'] [ref_label,'-B'] '' 'Mean-L*' 'Mean-A*' 'Mean-B*' '' [ref_label,'-L*'] [ref_label,'-A*'] [ref_label,'-B*']}, getRange(T1(1)-2, T1(2), T1(3), T1(2)));
     xlswrite(file, rgb, getRange(T1(1), T1(2)+1, T1(1)+2, T1(4)));
     xlswrite(file, srgb, getRange(T1(1)+4, T1(2)+1, T1(1)+6, T1(4)));
     xlswrite(file, lab, getRange(T1(1)+8, T1(2)+1, T1(1)+10, T1(4)));
