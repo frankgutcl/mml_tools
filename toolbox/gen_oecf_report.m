@@ -102,10 +102,19 @@ function gen_oecf_report(file, rgbw_array, label_array, lumi_table)
             gray(i) = rgbw_array(index,i,4);
         end
         max = find(gray==255,1,'first');
+        
+        %Very dirty code, should change after: How to exam an empty matrix
+        if max >3
+        else
+            max = 20;
+        end
+        
+        %If the last two patches are very close, the last patch(saturated)
+        %should not be count...
+
         factor = 1024/lumi_table(max);
         
         NewSeries = invoke(excel.ActiveChart.SeriesCollection,'NewSeries');
-        
         
         NewSeries.XValues = lumi_table(1:max).*factor;
         NewSeries.Values  = gray(1:max);
