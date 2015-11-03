@@ -21,6 +21,7 @@ function test_oecf(in_file, out_file)
         
         oecf = imread(fn);
         grid = oecf_align(oecf);
+        figure;
         imshow(oecf);
         
         for j=1:20
