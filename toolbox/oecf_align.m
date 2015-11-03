@@ -8,6 +8,8 @@
 
 function grid=oecf_align(img)
 
+    CROP_MARGIN = 10;
+    
     if 2==size(size(img),2)
         %Looks like a file name
         img = imread(img);
@@ -86,7 +88,7 @@ function grid=oecf_align(img)
     
     for i=11:20
         [c, r] = find_circle(blurred_pic, grid(i,1), grid(i,2),20);
-        grid(i,:) = [c(1)-r*2/3, c(2)-r*2/3, c(1)+r*2/3, c(2)+r*2/3];
+        grid(i,:) = [c(1)-r*1/2, c(2)-r*1/2, c(1)+r*1/2, c(2)+r*1/2];
         %The bottom part is too dark to align...
         grid(21-i,:) = [cent(1)*2-grid(i,3), cent(2)*2-grid(i,4), cent(1)*2-grid(i,1), cent(2)*2-grid(i,2)];
     end
@@ -96,7 +98,7 @@ end
 function result=check_color(pixel, color, tolerence)
     COLOR(1,1,:) = uint8(color);
   
-    [no_use, deltaP] = color_dist(pixel, COLOR);
+    [~, deltaP] = color_dist(pixel, COLOR);
     
     if deltaP > tolerence
         result = 0;
