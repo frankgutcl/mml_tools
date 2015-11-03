@@ -1,0 +1,79 @@
+clear;clc;
+cd 'C:\Users\frank.gu\Desktop\tangli\check' %图像文件夹路径
+img_path_list =  dir(fullfile('*.raw'));%获取该文件夹中所有raw格式的图像
+img_num = length(img_path_list);%获取图像总数量
+
+DATA = cell(img_num,5);
+OUT = cell(img_num+1,5);
+
+if img_num > 0 %有满足条件的图像
+    for i = 1:img_num %逐一读取图像
+            image_name = img_path_list(i).name;% 图像名
+            image = fopen(image_name,'rb','b');
+           % fprintf('%d %d %s\n',i,strcat(file_path,image_name));% 显示正在处理的图像名
+
+%img=fopen(filename,'rb');
+
+%w=2592;pixi 8M
+%h=1944;
+
+w=4212;%idol3 13M
+h=3120;
+
+size= w*h/6;
+[raw,l] = fread(image, size, 'uint64=>uint64','l');
+
+image_test(1,1:size) = uint16(bitand(raw(1:size),1023));
+image_test(2,1:size) = uint16(bitshift(bitand(raw(1:size),2^20 - 2^10),-10));
+image_test(3,1:size) = uint16(bitshift(bitand(raw(1:size),2^30 - 2^20),-20));
+image_test(4,1:size) = uint16(bitshift(bitand(raw(1:size),2^40 - 2^30),-30));
+image_test(5,1:size) = uint16(bitshift(bitand(raw(1:size),2^50 - 2^40),-40));
+image_test(6,1:size) = uint16(bitshift(bitand(raw(1:size),2^60 - 2^50),-50));
+img1 = reshape(image_test,[w h]);
+img = img1';
+%raw = uint8(bitshift(img,-(10-8)));
+
+B = img(1:2:end, 1:2:end);
+
+Gb = img(1:2:end, 2:2:end);
+
+Gr = img(2:2:end, 1:2:end);
+
+R = img(2:2:end, 2:2:end);
+
+
+Bave = mean(B(:));
+Grave = mean(Gr(:));
+Gbave = mean(Gb(:));
+Rave = mean(R(:));
+
+A = {image_name Bave Gbave Grave Rave};
+DATA(i,:) = A;
+
+    end 
+end
+
+OUT(1,:) = {'ISO','B_avg','Gb_avg','Gr_avg','R_avg'};
+OUT(2:img_num+1,:) = DATA;
+
+
+temp = OUT(2:img_num+1,1);
+temp1 = cell2mat(temp);
+OUT(2:img_num+1,1) = cellstr(temp1(1:img_num,1:4));
+
+xlswrite('C:\Users\frank.gu\Desktop\tangli\check\BlackLevel.xlsx',OUT); %C:\Users\frank.gu\Desktop\tangli\check\BlackLevel.xlsx
+disp('Done')
+
+
+
+%BG_ratio = Bave/Gave
+%RG_ratio = Rave/Gave
+%BG_ratio_typical = BG_ratio * 512
+%RG_ratio_typical = RG_ratio * 512
+%if hGb<hB
+ %  Gb=[Gb,zeros(wGb,(hB-hGb))];
+%end
+%
+%if hGr>hR
+ %   R=[R,zeros(wR,(hGr-hR))];
+%end
