@@ -1,3 +1,9 @@
+%(Depreciated)Plot the oecf curv in matlab
+%
+% Input
+% *rgbw_array: The rgbw array for single picture
+% *lumi_table: The luminance of each patch
+
 function plot_oecf_curv(rgbw_array, lumi_table)
     figure;
     title('OECF Plot');

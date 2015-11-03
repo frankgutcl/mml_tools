@@ -1,3 +1,12 @@
+%Plot the MCC error between "current" RGB and refenced RGB. Reference is
+%noted with square and "current" is noted as circle
+%
+% Input
+% *lab: The CIELab of current
+% *slab: The referenced CIELab 
+% *rgb: The RGB of current, used as color fill
+% *srgb: The reference RGB, used as color fill
+
 function plot_mcc_error(lab, slab, rgb, srgb)
     figure;
     axis([-100, 100, -100, 100]);

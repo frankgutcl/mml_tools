@@ -5,7 +5,7 @@
 %                 8 bit
 %
 %  Output 
-%  *deltaV: The difference value of pixelA & pixelB
+%  *deltaV: The difference value(absolute-value in RGB) of pixelA & pixelB
 %  *deltaP: The difference percentage of pixelA & pixelB
 
 function [deltaV, deltaP]=color_dist(pixelA, pixelB)
