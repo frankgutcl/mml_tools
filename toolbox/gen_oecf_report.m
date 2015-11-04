@@ -180,7 +180,6 @@ function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, p
     ExpChart.Left = GetPlacement.Left;
     ExpChart.Top = GetPlacement.Top;
     
-    
     workbook.Save();
     workbook.Close();
     excel.Quit();

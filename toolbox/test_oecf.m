@@ -52,8 +52,12 @@ function test_oecf(in_file, out_file)
         
     ltable = load('oecf_lum.dat');
     
+    delete(out_file); %Clear the output file first
     gen_oecf_report(out_file, rgbw_array, label_array, ltable, picture_files, picture_ratios);
     %plot_oecf_curv(rgbw, ltable);
     
+    for i=1:size(picture_files,2)
+        delete(cell2mat(picture_files(i)));
+    end
     disp('Done!');
 end
