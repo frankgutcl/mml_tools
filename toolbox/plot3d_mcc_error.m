@@ -1,3 +1,12 @@
+%Plot the mcc error in 3D(LAB) space. The square is the reference and the
+%circle is the "current" color
+%
+% Input
+% *lab: The "current" lab color. It is a 24*3 matrix (in 0-255)
+% *slab: The reference lab color. A 24*3 matrix (in 0-255)
+% *rgb: The "current" rgb color, used for display. It is a 24*3 matrix (in 0-255)
+% *srgb: The reference rgb color, used for display. A 24*3 matrix (in 0-255)
+
 function plot3d_mcc_error(lab, slab, rgb, srgb)
     figure;
     axis([-100, 100, -100, 100, 0, 100]);

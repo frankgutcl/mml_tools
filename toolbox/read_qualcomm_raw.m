@@ -1,3 +1,11 @@
+%To read the raw image (Bayer pattern RGGB)
+%
+% Input
+% *file: The name of the file (string)
+% *w: The width of the picture
+% *h: The height of the picture
+% *format: Only 'Q10' is supported yet
+
 function ret=read_qualcomm_raw(file, w, h, format)
     fp = fopen(file,'rb','b');
     %w = 3264;

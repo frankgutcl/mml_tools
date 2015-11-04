@@ -1,3 +1,11 @@
+%Test the mcc chart
+%
+% Input
+% *in_file: The file(jpg/png) to exam. format in string
+% *out_file: The report in xlsx. format in string
+% *ref: The reference, can be 'ip6', 's6' or 'ideal',leave it empty will
+% take the reference of ideal-mcc
+
 function test_mcc(in_file, out_file, ref)
 
 mcc = imread(in_file);
