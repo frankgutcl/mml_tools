@@ -23,16 +23,16 @@ function test_mcc(in_file, out_file)
     end
 
     if isRefPic
-        [path, ~] = split_file_name(ref);
+        [path, fn] = split_file_name(ref);
         refData = imread(ref);
         mccData = imread(mcc);
-        temp_files(2) = mat2cell([path 'tempref~.jpg']);
-        mcc_align(refData, makeCallback(isRefPic), [path 'tempref~.jpg']);
+        temp_files(2,1) = mat2cell([path 'tempref~.jpg']);
+        mcc_align(refData, fn, makeCallback(isRefPic), [path 'tempref~.jpg']);
     else
-        [path, ~] = split_file_name(mcc);
+        [path, fn] = split_file_name(mcc);
         mccData = imread(mcc);
-        temp_fies(1) = mat2cell([path 'temp~.jpg']);
-        mcc_align(mccData, makeCallback(isRefPic), [path 'temp~.jpg']);
+        temp_fies(1,1) = mat2cell([path 'temp~.jpg']);
+        mcc_align(mccData, fn, makeCallback(isRefPic), [path 'temp~.jpg']);
     end
     
     function f=makeCallback(refPic)
@@ -46,10 +46,14 @@ function test_mcc(in_file, out_file)
             ref_name = 'Ideal';
         else
             refAligned = 0; 
-            [~, fn] = split_file_name(ref);
-            result = regexp(fn, '\.', 'split');
+            [~, tempfn] = split_file_name(ref);
+            result = regexp(tempfn, '\.', 'split');
             ref_name = cell2mat(result(1));
         end
+        
+        [~, tempfn] = split_file_name(mcc);
+        result = regexp(tempfn, '\.', 'split');
+        cname = cell2mat(result(1));
 
         function align_cb(grid)  
             if isRefPic && ~refAligned
@@ -62,8 +66,9 @@ function test_mcc(in_file, out_file)
                 end
                 ref_lab = applycform(ref_rgb/255, rgb2lab);
                 
-                [path, ~] = split_file_name(mcc);
-                mcc_align(mccData, @align_cb, [path 'temp~.jpg']);
+                [path, tempfn] = split_file_name(mcc);
+                temp_files(1,1) = mat2cell([path 'temp~.jpg']);
+                mcc_align(mccData, tempfn, @align_cb, [path 'temp~.jpg']);
                 return;
             else
                 %align the current picture
@@ -74,8 +79,11 @@ function test_mcc(in_file, out_file)
                 lab = applycform(rgb/255, rgb2lab);
             end
 
-            gen_mcc_report(out_file, round(rgb), round(ref_rgb), lab, ref_lab, ref_name);
-            plot3d_mcc_error(lab, ref_lab, round(rgb), ref_rgb);
+            gen_mcc_report(out_file, {round(rgb); round(ref_rgb)}, {lab; ref_lab}, {cname; ref_name}, temp_files);
+            
+            for i=1:size(temp_files)
+                delete(cell2mat(temp_files(i)));
+            end
             disp('Done!');
         end
         
