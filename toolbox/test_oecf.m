@@ -29,7 +29,8 @@ function test_oecf(in_file, out_file)
         for j=1:20
             draw_rect(grid(j,1), grid(j,2), grid(j,3), grid(j,4));
         end
-        temp_pic_file = ['D:\tmp\temp' int2str(i) '.jpg'];
+        [path name] = split_file_name(fn);
+        temp_pic_file = [path 'temp' int2str(i) '~.jpg'];
         saveas(gcf, temp_pic_file);
         picture_files(i) = mat2cell(temp_pic_file);
         picture_ratios(i) = size(oecf,1)/size(oecf,2);
