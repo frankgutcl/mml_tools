@@ -31,7 +31,7 @@ function test_mcc(in_file, out_file)
     else
         [path, fn] = split_file_name(mcc);
         mccData = imread(mcc);
-        temp_fies(1,1) = mat2cell([path 'temp~.jpg']);
+        temp_files(1,1) = mat2cell([path 'temp~.jpg']);
         mcc_align(mccData, fn, makeCallback(isRefPic), [path 'temp~.jpg']);
     end
     
