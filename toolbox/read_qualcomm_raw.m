@@ -21,18 +21,25 @@ function ret=read_qualcomm_raw(file, w, h, format)
         Data = fread(fp,sizet,'*uint8', 0,'l' );
         Data = uint16(Data);
         
-        for row=1:h
-            row_offset = (row-1)*(w*5/4+4);
-            
-            for col=1:4:w
-                col_offset = floor(col/4) * 5;
-                total_offset = row_offset + col_offset + 1;
-                ret(row, col  ) = bitor(bitshift(Data(total_offset  ),2), bitand(bitshift(Data(total_offset+4),0),3));
-                ret(row, col+1) = bitor(bitshift(Data(total_offset+1),2), bitand(bitshift(Data(total_offset+4),-2),3));
-                ret(row, col+2) = bitor(bitshift(Data(total_offset+2),2), bitand(bitshift(Data(total_offset+4),-4),3));
-                ret(row, col+3) = bitor(bitshift(Data(total_offset+3),2), bitand(bitshift(Data(total_offset+4),-6),3));
-            end
-        end
+        Data = reshape(Data, [w*5/4+4, h]);
+        
+        %Remove the 4-bytes jpadding
+        Data = Data(1:w*5/4, :);
+        
+        %Split the 5th element
+        Data = reshape(Data, [5, w*h/4]);
+        
+        major = Data(1:4, :);
+        minor = Data(5, :);
+        minor1 = bitand(minor,3);
+        minor2 = bitand(bitshift(minor, -2), 3);
+        minor3 = bitand(bitshift(minor, -4), 3);
+        minor4 = bitand(bitshift(minor, -6), 3);
+        minor = [minor1;minor2;minor3;minor4];
+        
+        ret = bitor(bitshift(major, 2), minor);
+        ret = reshape(ret, [w,h]);
+        ret = ret';
   
         fclose(fp);
     elseif strcmpi(format,'q10')
