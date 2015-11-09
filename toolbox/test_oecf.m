@@ -29,11 +29,11 @@ function test_oecf(in_file, out_file)
         for j=1:20
             draw_rect(grid(j,1), grid(j,2), grid(j,3), grid(j,4));
         end
-        [path name] = split_file_name(fn);
+        [path, ~] = split_file_name(fn);
         temp_pic_file = [path 'temp' int2str(i) '~.jpg'];
         saveas(gcf, temp_pic_file);
-        picture_files(i) = mat2cell(temp_pic_file);
-        picture_ratios(i) = size(oecf,1)/size(oecf,2);
+        picture_files(i) = mat2cell(temp_pic_file); %#ok<AGROW>
+        picture_ratios(i) = size(oecf,1)/size(oecf,2); %#ok<AGROW>
         
         close;
 
@@ -48,7 +48,7 @@ function test_oecf(in_file, out_file)
         
         splitted_path = regexp(fn, '\', 'split');
         splitted_fn = regexp(cell2mat(splitted_path(end)), '\.', 'split');
-        label_array(i) = splitted_fn(1);        
+        label_array(i) = splitted_fn(1);         %#ok<AGROW>
     end
         
     ltable = load('oecf_lum.dat');
