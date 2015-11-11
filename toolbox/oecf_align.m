@@ -33,13 +33,11 @@ function grid=oecf_align(img)
             %is found/aligned
             centX = cent(1) - radius - 20;
             centY = cent(2) - radius - 20;
-            disp('small circle');
         else
             %If the radius is big, we consider the big circle is
             %found/aligned
             centX = cent(1);
             centY = cent(2);
-            disp('big circle');            
         end
     end
 
