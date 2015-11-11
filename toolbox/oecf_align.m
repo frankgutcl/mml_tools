@@ -21,7 +21,7 @@ function grid=oecf_align(img)
     %alignment
     bfilter = fspecial('disk', 7);
     blurred_pic= imfilter(img, bfilter);
-    
+
     centX = imgW/2;
     centY = imgH/2;
 
@@ -87,7 +87,7 @@ function grid=oecf_align(img)
     end
     
     for i=11:20
-        [c, r] = find_circle(blurred_pic, grid(i,1), grid(i,2),20);
+        [c, r] = find_circle(blurred_pic, grid(i,1), grid(i,2),10);
         grid(i,:) = [c(1)-r*1/2, c(2)-r*1/2, c(1)+r*1/2, c(2)+r*1/2];
         %The bottom part is too dark to align...
         grid(21-i,:) = [cent(1)*2-grid(i,3), cent(2)*2-grid(i,4), cent(1)*2-grid(i,1), cent(2)*2-grid(i,2)];
