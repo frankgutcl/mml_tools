@@ -24,20 +24,22 @@ function grid=oecf_align(img)
     
     centX = imgW/2;
     centY = imgH/2;
-   
+
     if check_color(blurred_pic(centY,centX,:), [0, 0, 0], 20)
         [cent, radius] = find_circle(blurred_pic, centX, centY, 20);
-        
+
         if (radius <= imgH/15)
             %If the radius is very small, we consider only the small circle
             %is found/aligned
-            centX = cent(1) - radius - 10;
-            centY = cent(2) - radius - 10;
+            centX = cent(1) - radius - 20;
+            centY = cent(2) - radius - 20;
+            disp('small circle');
         else
             %If the radius is big, we consider the big circle is
             %found/aligned
             centX = cent(1);
             centY = cent(2);
+            disp('big circle');            
         end
     end
 

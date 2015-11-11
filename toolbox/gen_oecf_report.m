@@ -3,7 +3,7 @@
 % Input
 % * file: The path of output file
 % * rgbw_array: The rgbw of patches(captured) in captured photos
-% * label_array: The labels of files
+% * label_array: The labels of files, a 1*n array
 % * lumi_table: The luminance table (measured)
 % * pic_files: The pictures (with cropped patches)
 % * pic_ratios: The ratio of the pictures
@@ -49,6 +49,7 @@ function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, p
         
         left = excel.ActiveSheet.Range('G1').Left;
         top = excel.ActiveSheet.Range('G1').Top;
+        
         sheet.Shapes.AddPicture(cell2mat(pic_files(index)),0,1,floor(left),floor(top), floor(350/pic_ratios(index)), 350);
         sheet.Name = cell2mat(label_array(index));
     end
@@ -80,7 +81,7 @@ function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, p
 
     for index=1:size(rgbw_array,1)
         NewSeries = invoke(excel.ActiveChart.SeriesCollection,'NewSeries');
-        NewSeries.XValues = [cell2mat(label_array(index)) '!B' int2str(3) ':B' int2str(22)];
+        NewSeries.XValues = [cell2mat(label_array(index)) '!G' int2str(3) ':G' int2str(22)];
         NewSeries.Values  = [cell2mat(label_array(index)) '!F' int2str(3) ':F' int2str(22)];
         NewSeries.Name    = cell2mat(label_array(index));
     end
@@ -179,6 +180,30 @@ function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, p
     GetPlacement = get(excel.ActiveSheet,'Range', 'B2');
     ExpChart.Left = GetPlacement.Left;
     ExpChart.Top = GetPlacement.Top;
+    
+    %Add the stretching index
+    excel.ActiveSheet.Range('J17').Value = 'Name';
+    excel.ActiveSheet.Range('K17').Value = 'EV';
+    font = sheet.Range('J17:K17').font;
+    font.size=12;
+    font.bold=1;
+        
+    for i=1:size(label_array,2)
+        excel.ActiveSheet.Range(['J',int2str(17+i)]).Value = cell2mat(label_array(i));
+        excel.ActiveSheet.Range(['K',int2str(17+i)]).Value = 0;
+    end
+
+    border=sheet.Range(['J17:K', int2str(size(label_array,2)+17)]).Borders;
+    border.ColorIndex=1;
+    border.Weight=3;
+ 
+    for s=2:size(label_array,2)+1
+        %Add the stretched "luminance" 
+        excel.sheets.Item(s).Activate();
+        for i=3:22
+            excel.ActiveSheet.Range(['G', int2str(i)]).Value = ['=B',int2str(i),'*POWER(2, summary!K',int2str(17+s-1),')']; %The factor is on the summary sheet
+        end
+    end
     
     workbook.Save();
     workbook.Close();
