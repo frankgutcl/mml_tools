@@ -6,9 +6,10 @@
 % * label_array: The labels of files, a 1*n array
 % * lumi_table: The luminance table (measured)
 % * pic_files: The pictures (with cropped patches)
+% * orig_files: The original files (used for EXIF inforamtion)
 % * pic_ratios: The ratio of the pictures
 
-function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, pic_ratios)
+function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, orig_files, pic_ratios)
     T1 = [3 2 6 22];
     T2 = [2 2 2 22];
     
@@ -122,12 +123,10 @@ function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, p
 
     %Clear the original data
     try
-        Series = invoke(excel.ActiveChart,'SeriesCollection',1);
-        invoke(Series,'Delete');
-        Series = invoke(excel.ActiveChart,'SeriesCollection',1);
-        invoke(Series,'Delete');
-        Series = invoke(excel.ActiveChart,'SeriesCollection',1);
-        invoke(Series,'Delete');
+        for i=1:3 %interative delete the existing series
+            Series = invoke(excel.ActiveChart,'SeriesCollection',1);
+            invoke(Series,'Delete');
+        end
     catch e
     end 
     
@@ -184,16 +183,32 @@ function gen_oecf_report(file, rgbw_array, label_array, lumi_table, pic_files, p
     %Add the stretching index
     excel.ActiveSheet.Range('J17').Value = 'Name';
     excel.ActiveSheet.Range('K17').Value = 'EV';
-    font = sheet.Range('J17:K17').font;
+    excel.ActiveSheet.Range('M17').Value = 'Aperture';
+    excel.ActiveSheet.Range('N17').Value = 'Exposure';
+    excel.ActiveSheet.Range('O17').Value = 'ISO';
+    excel.ActiveSheet.Range('P17').Value = 'value*';
+    
+    font = sheet.Range('J17:O17').font;
     font.size=12;
     font.bold=1;
         
     for i=1:size(label_array,2)
         excel.ActiveSheet.Range(['J',int2str(17+i)]).Value = cell2mat(label_array(i));
         excel.ActiveSheet.Range(['K',int2str(17+i)]).Value = 0;
+        
+        picinfo = exifread(cell2mat(orig_files(i)));
+        strIndex = int2str(17+i);
+        excel.ActiveSheet.Range(['M',strIndex]).Value = picinfo.ApertureValue;
+        excel.ActiveSheet.Range(['N',strIndex]).Value = picinfo.ExposureTime;
+        excel.ActiveSheet.Range(['O',strIndex]).Value = picinfo.ISOSpeedRatings;
+        excel.ActiveSheet.Range(['P',strIndex]).Value = ['=N' strIndex '*O' strIndex '/(M' strIndex '*M' strIndex ')'];
     end
 
     border=sheet.Range(['J17:K', int2str(size(label_array,2)+17)]).Borders;
+    border.ColorIndex=1;
+    border.Weight=3;
+    
+    border=sheet.Range(['M17:P', int2str(size(label_array,2)+17)]).Borders;
     border.ColorIndex=1;
     border.Weight=3;
  
