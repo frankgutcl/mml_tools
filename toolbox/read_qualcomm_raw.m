@@ -16,14 +16,13 @@ function ret=read_qualcomm_raw(file, w, h, format)
     
     
     if strcmpi(format, 'm10')
-        %Not applicable yet
         sizet = w*h*5/4 + h*4;
         Data = fread(fp,sizet,'*uint8', 0,'l' );
         Data = uint16(Data);
         
         Data = reshape(Data, [w*5/4+4, h]);
         
-        %Remove the 4-bytes jpadding
+        %Remove the 4-bytes padding
         Data = Data(1:w*5/4, :);
         
         %Split the 5th element
