@@ -74,8 +74,8 @@ function gen_mcc_report(out_file, rgb_array, lab_array, label_array, crop_files)
     
     %Show plotted image
     plot_mcc_error(lab, ref_lab, rgb, ref_rgb);
-    [path, fn] = split_file_name(out_file);
-    tmpfile = [path 'plotmcc~.jpg'];
+    [path, ~, ~] = fileparts(out_file);
+    tmpfile = [path, '\plotmcc~.jpg'];
     saveas(gcf, tmpfile);
     close(gcf);
     
@@ -86,9 +86,7 @@ function gen_mcc_report(out_file, rgb_array, lab_array, label_array, crop_files)
     delete(tmpfile);
    
     plot3d_mcc_error(lab, ref_lab, rgb, ref_rgb);
-    [path, fn] = split_file_name(out_file);
-    splited_fn = regexp(fn, '\.', 'split');
-    tmpfile = [path cell2mat(splited_fn(1)) '.fig'];
+    tmpfile = [path, '\plotmcc~.fig'];
     saveas(gcf, tmpfile);
     close(gcf);
     
