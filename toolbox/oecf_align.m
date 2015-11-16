@@ -21,18 +21,18 @@ function grid=oecf_align(img)
     %alignment
     bfilter = fspecial('disk', 7);
     blurred_pic= imfilter(img, bfilter);
-    
+
     centX = imgW/2;
     centY = imgH/2;
-   
+
     if check_color(blurred_pic(centY,centX,:), [0, 0, 0], 20)
         [cent, radius] = find_circle(blurred_pic, centX, centY, 20);
-        
-        if (radius <= imgH/20)
+
+        if (radius <= imgH/15)
             %If the radius is very small, we consider only the small circle
             %is found/aligned
-            centX = cent(1) - radius - 10;
-            centY = cent(2) - radius - 10;
+            centX = cent(1) - radius - 20;
+            centY = cent(2) - radius - 20;
         else
             %If the radius is big, we consider the big circle is
             %found/aligned
@@ -87,7 +87,7 @@ function grid=oecf_align(img)
     end
     
     for i=11:20
-        [c, r] = find_circle(blurred_pic, grid(i,1), grid(i,2),20);
+        [c, r] = find_circle(blurred_pic, grid(i,1), grid(i,2),10);
         grid(i,:) = [c(1)-r*1/2, c(2)-r*1/2, c(1)+r*1/2, c(2)+r*1/2];
         %The bottom part is too dark to align...
         grid(21-i,:) = [cent(1)*2-grid(i,3), cent(2)*2-grid(i,4), cent(1)*2-grid(i,1), cent(2)*2-grid(i,2)];

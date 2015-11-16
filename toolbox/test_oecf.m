@@ -1,7 +1,7 @@
 %To exam the oecf(Optical-Electronic-Conversion-Function) of the camaera
 %
 % Input 
-% *in_file: A string of file name(path) or an array of files
+% *in_file: A string of file name(path) or an array of files (embrace with {} and seperate with ;)
 %
 % Output
 % *out_file: The report to be generated
@@ -15,17 +15,27 @@ function test_oecf(in_file, out_file)
     
     rgbw_array = ones(size(in_file,1), 20, 4);
     label_array = {};
+    picture_files = {};
+    picture_ratios = [];
     
     for i=1:size(in_file,1)
         fn = cell2mat(in_file(i));
         
         oecf = imread(fn);
         grid = oecf_align(oecf);
+        figure;
         imshow(oecf);
         
         for j=1:20
             draw_rect(grid(j,1), grid(j,2), grid(j,3), grid(j,4));
         end
+        [path, ~, ~] = fileparts(fn);
+        temp_pic_file = [path 'temp' int2str(i) '~.jpg'];
+        saveas(gcf, temp_pic_file);
+        picture_files(i) = mat2cell(temp_pic_file); %#ok<AGROW>
+        picture_ratios(i) = size(oecf,1)/size(oecf,2); %#ok<AGROW>
+        
+        close;
 
         rgbw = ones(20,4);
 
@@ -36,15 +46,19 @@ function test_oecf(in_file, out_file)
         
         rgbw_array(i,:,:) = rgbw(:,:);
         
-        
-        fn = cell2mat(regexp(fn, '\w*.jpg', 'match', 'ignorecase'));
-        label_array(i) = regexp(fn, '\w*\.', 'match');        
+        splitted_path = regexp(fn, '\', 'split');
+        splitted_fn = regexp(cell2mat(splitted_path(end)), '\.', 'split');
+        label_array(i) = splitted_fn(1);         %#ok<AGROW>
     end
         
     ltable = load('oecf_lum.dat');
     
-    gen_oecf_report(out_file, rgbw_array, label_array, ltable);
+    delete(out_file); %Clear the output file first
+    gen_oecf_report(out_file, rgbw_array, label_array, ltable, picture_files, in_file, picture_ratios);
     %plot_oecf_curv(rgbw, ltable);
     
+    for i=1:size(picture_files,2)
+        delete(cell2mat(picture_files(i)));
+    end
     disp('Done!');
 end
