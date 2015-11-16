@@ -23,16 +23,16 @@ function test_mcc(in_file, out_file)
     end
 
     if isRefPic
-        [path, fn] = split_file_name(ref);
+        [path, name, ~] = fileparts(ref);
         refData = imread(ref);
         mccData = imread(mcc);
         temp_files(2,1) = mat2cell([path 'tempref~.jpg']);
-        mcc_align(refData, fn, makeCallback(isRefPic), [path 'tempref~.jpg']);
+        mcc_align(refData, name, makeCallback(isRefPic), [path 'tempref~.jpg']);
     else
-        [path, fn] = split_file_name(mcc);
+        [path, name, ~] = fileparts(mcc);
         mccData = imread(mcc);
         temp_files(1,1) = mat2cell([path 'temp~.jpg']);
-        mcc_align(mccData, fn, makeCallback(isRefPic), [path 'temp~.jpg']);
+        mcc_align(mccData, name, makeCallback(isRefPic), [path 'temp~.jpg']);
     end
     
     function f=makeCallback(refPic)
@@ -46,14 +46,10 @@ function test_mcc(in_file, out_file)
             ref_name = 'Ideal';
         else
             refAligned = 0; 
-            [~, tempfn] = split_file_name(ref);
-            result = regexp(tempfn, '\.', 'split');
-            ref_name = cell2mat(result(1));
+            [~, ref_name, ~] = fileparts(ref);
         end
         
-        [~, tempfn] = split_file_name(mcc);
-        result = regexp(tempfn, '\.', 'split');
-        cname = cell2mat(result(1));
+        [~, cname, ~] = fileparts(mcc);
 
         function align_cb(grid)  
             if isRefPic && ~refAligned
@@ -66,7 +62,7 @@ function test_mcc(in_file, out_file)
                 end
                 ref_lab = applycform(ref_rgb/255, rgb2lab);
                 
-                [path, tempfn] = split_file_name(mcc);
+                [path, tempfn, ~] = fileparts(mcc);
                 temp_files(1,1) = mat2cell([path 'temp~.jpg']);
                 mcc_align(mccData, tempfn, @align_cb, [path 'temp~.jpg']);
                 return;
