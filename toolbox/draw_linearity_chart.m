@@ -22,11 +22,10 @@ std_results = cell(img_num,5);
 snr_results = cell(img_num,4);
 mean_value_data = cell(img_num+1,5);
 
-
+path(path,'D:\3_ReportExample\MATLAB\toolbox')    % Set the function path;
 if img_num > 0                                                % If the folder has files
     for i = 1:img_num                                         % Read image one-by-one
             image_name = img_path_list(i).name;               % Set the veriable = image name;
-            path(path,'D:\3_ReportExample\MATLAB\toolbox')    % Set the function path;
             img = read_qualcomm_raw(image_name, w, h, format);% Qualcomm raw image processing;
                         
             if strcmpi(pattern, 'grbg')                       % Judge which sensor pattern used;
@@ -40,6 +39,10 @@ if img_num > 0                                                % If the folder ha
                 Gb = img(1:2:end, 2:2:end);
                 Gr = img(2:2:end, 1:2:end);
                 R = img(2:2:end, 2:2:end);
+                
+            else 
+                disp('ERROR: UNKNOWN PATTERN FORMAT!')
+                break
             end
             
             Bave = mean(B(:));                               % Calculate mean value of B,G,G,R;
@@ -47,7 +50,7 @@ if img_num > 0                                                % If the folder ha
             Grave = mean(Gr(:));
             Rave = mean(R(:));
             
-            Y=0.299*R+ 0.587*(Gb/2+Gr/2)+0.112*B;            % Calculate std value
+            Y=0.2989*R+ 0.5870*(Gb/2+Gr/2)+0.1140*B;            % Calculate std value
             stdY = std2(Y);
             stdB = std2(B);
             stdGb = std2(Gb);
@@ -397,11 +400,6 @@ for i = 1:exp_num:img_num
     workbook.Close();
     excel.Quit();
 end
-% Reopen excel
-    excel = actxserver('Excel.Application');
-    excel.visible = 1;
-    workbooks = excel.Workbooks;
-    workbooks.Open (filespec_user);
 
     disp('Done!');
 end
